@@ -1,6 +1,4 @@
-This repository is a collection of misc small code projects.
-Some I created and some I found or modified from elsewhere.
-Either way it's not really worth having a repository for each one.
+This repository is a collection of misc small code projects. Some I created and some I found or modified from elsewhere. Either way it's not really worth having a repository for each one.
 
 I collected them all here so I don't lose them, and so others can find and use them easily.
 
@@ -8,7 +6,7 @@ I collected them all here so I don't lose them, and so others can find and use t
 coinwatch - Simple daemon to watch for Bitcoin payments and update mysql tables.
 hexwif 	  - Convert Bitcoin hex private key to WIF format (base 58) cmd lien tool.
 mickey	  - Simplest Bitcoin key/address generator
-sudoku	  - Inkscape extension (and bash script) to create SVG and PDF sudoku puzzles 
-mkpwds	  - Password list generator for private key challenge (used with JohnTheRipper)
+sudoku	  - Inkscape extension (and bash script) to create SVG/PDF sudoku puzzles 
+mkpwds	  - Password list generator for gpg private key challenge 
 
 
