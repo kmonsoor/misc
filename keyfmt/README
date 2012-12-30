@@ -1,4 +1,6 @@
- Read a 64 char HEX value from stdin and output a formatted string.
+ Read a private key from stdin and output formatted data values.
+ Input one key per line either hex (64 chars) or WIF key (51 base 58 chars).
+
  The format argument can contain variables:
 
  %h = HEX privkey
