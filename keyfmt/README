@@ -1,0 +1,14 @@
+ Read a 64 char HEX value from stdin and output a formatted string.
+ The format argument can contain variables:
+
+ %h = HEX privkey
+ %w = WIF privkey
+ %p = public key
+ %a = address
+
+ eg. "Address: %a\nPrivkey: %w" outputs a format like the vanitygen program
+     "a:%w" outputs a format good for importing to Electrum
+ 
+ This generates a new key for importing to Electrum:
+
+     hexdump -v -e '/1 "%02X"' -n 32 /dev/urandom | keyfmt "%a:%w"
