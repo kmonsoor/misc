@@ -1,5 +1,5 @@
  Read a private key from stdin and output formatted data values.
- Input one key per line either hex (64 chars) or WIF key (51 base 58 chars).
+ Input one key per line either hex (64 chars) or WIF key (51 base-58 chars).
 
  The format argument can contain variables:
 
