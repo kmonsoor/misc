@@ -2,8 +2,8 @@ This repository is a collection of misc small code projects. Some I created and 
 
 I collected them all here so I don't lose them, and so others can find and use them easily. I'll be adding more junk here as time passes. If you like weird odds and sodds then check back.
 
-keyfmt	  - Convert / Format a hex private key as Hex, WIF, Pubkey, Address.
-hexwif 	  - Convert Bitcoin hex private key to WIF format (base 58) cmd line tool.
+keyfmt	  - Convert private key as Hex, WIF, Pubkey, Address cmd line tool.
+hexwif 	  - Convert Bitcoin hex private key to WIF format cmd line tool.
 mkpwds	  - Password list generator for gpg private key challenge. 
 mickey	  - Simplest cmd line Bitcoin key/address generator.
 coinwatch - Simple daemon to watch for Bitcoin payments and update mysql tables.
