@@ -4,8 +4,8 @@ I collected them all here so I don't lose them, and so others can find and use t
 
 
 coinwatch - Simple daemon to watch for Bitcoin payments and update mysql tables.
-hexwif 	  - Convert Bitcoin hex private key to WIF format (base 58) cmd lien tool.
-mickey	  - Simplest Bitcoin key/address generator
+hexwif 	  - Convert Bitcoin hex private key to WIF format (base 58) cmd line tool.
+mickey	  - Simplest cmd line Bitcoin key/address generator
 sudoku	  - Inkscape extension (and bash script) to create SVG/PDF sudoku puzzles 
 mkpwds	  - Password list generator for gpg private key challenge 
 
