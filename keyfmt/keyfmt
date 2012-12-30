@@ -58,6 +58,7 @@ if advanced:
 	SECP256k1 = ecdsa.curves.Curve("SECP256k1", curve_secp256k1, generator_secp256k1, oid_secp256k1 ) 
 
 for line in sys.stdin:
+	line = line.replace(' ', '')
 	line = b58hex(line[:51]) if line[0] == '5' and len(line) < 64 else line[:64]
 	chksum = binascii.hexlify(hashlib.sha256(hashlib.sha256(binascii.unhexlify('80'+line)).digest()).digest()[:4])
 	privkey = long('80'+line+chksum, 16)
