@@ -27,7 +27,7 @@ qqwing --generate 18 --one-line |sud2svg sudo6a4.svg page
 qqwing --generate 6 --one-line --difficulty expert |sud2svg sudo6a4.svg page pdf
 (Generates one page with 6 puzzles named page0.svg and a PDF version named page0.pdf)
 
-qqwing is available here: http://ostermiller.org/qqwing/
+I've now added qqwing to this repo for ease of use. It is distrubted under the GPL and the original code is available here: http://ostermiller.org/qqwing/ 
 
 sudo2svg should work with any one-line puzzle source.
 
