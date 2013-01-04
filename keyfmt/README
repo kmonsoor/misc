@@ -13,4 +13,4 @@
  
  This generates a new key for importing to Electrum:
 
-     hexdump -v -e '/1 "%02X"' -n 32 /dev/urandom | keyfmt "%a:%w"
+     od -An -N32 -xw32 /dev/random | keyfmt "%a:%w"
