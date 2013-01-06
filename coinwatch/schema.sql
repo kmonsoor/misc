@@ -19,8 +19,6 @@ CREATE TABLE `pmts` ( /* payment audit history with various details for each pay
   PRIMARY KEY (`id`)
 )
 
-In my application another backend process detects job status and actually runs jobs. These jobs cost bitcoin and so in my case I calculate which jobs can be run, and update status. Actual job fee is not deducted until job is completed.
-
 CREATE TABLE `jobs` (  /* info about pending jobs that may be run when a user has sufficient balance */
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) DEFAULT NULL,		/* user who owns job */

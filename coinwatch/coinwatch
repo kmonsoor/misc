@@ -2,7 +2,6 @@
 
 import os, sys, getopt, urllib, daemon, datetime, signal, pwd, getpass, pickle
 from time import sleep
-from decimal import Decimal
 import MySQLdb as mdb
 import json
 
@@ -27,7 +26,7 @@ def run():
 			CheckBlock(cfg['block'])
 			cfg['block'] += 1
 		elif (latest - cfg['confirm']['min']) >= cfg['block']:
-			print logts(), "Block %s < %s,  %s All" % (cfg['block'], cfg['confirm']['break'], latest - cfg['confirm']['max'])
+			print logts(), "Block %s < %s,  %s All" % (cfg['block'], float(cfg['confirm']['break'])/100000000, latest - cfg['confirm']['max'])
 			CheckBlock(latest - cfg['confirm']['max'])
 			CheckBlock(cfg['block'], cfg['confirm']['break'])
 			cfg['block'] += 1
@@ -47,7 +46,7 @@ def Check4Pmts(block, limit):
 	cur = db.cursor()
 	for tx in block['tx']:
 		for pmt in tx['out']:
-			if limit == None or pmt['value'] <= limit*100000000:
+			if limit == None or pmt['value'] <= limit:
 				cur.execute("select id from users where address=%s limit 1;", pmt['addr'])
 				if cur.rowcount == 1:
 					kid, = cur.fetchone()
@@ -150,7 +149,7 @@ def options():
 			cfg['poll'] = int(arg)
 		elif opt in ("-c", "--confirm"):
 			mn,mx,brk = arg.split(',')
-			cfg['confirm'] = {'min':int(mn),'max':int(mx),'break':float(brk)}			
+			cfg['confirm'] = { 'min':int(mn),'max':int(mx),'break':int(float(brk)*100000000) }			
 		elif opt in ("-r", "--rpc"):
 			cfg['rpc_url'] = arg
 		elif opt in ("-d", "--db"):
@@ -163,7 +162,7 @@ def options():
 			cfg['pid'] = arg
 		elif opt in ("-s", "--defaults"):
 			savecfg()
-			print "%s updated" % sys.argv[0]+'.cfg'
+			print "%s updated" % (sys.argv[0]+'.cfg')
 			sys.exit()
 		elif opt in ("--debug"):
 			cfg['debug'] = True
