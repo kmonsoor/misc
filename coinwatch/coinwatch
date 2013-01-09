@@ -6,7 +6,7 @@ import MySQLdb as mdb
 import json
 
 version = "0.2.0"
-cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':1, 'confirm': [(2,1e7),(6,0)], 'block':215700 }
+cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':60, 'confirm': [(2,1e7),(6,0)], 'block':215700 }
 
 def main():
 	if cfg['debug']:
