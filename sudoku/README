@@ -27,8 +27,6 @@ qqwing --generate 18 --one-line |sud2svg sudo6a4.svg page
 qqwing --generate 6 --one-line --difficulty expert |sud2svg sudo6a4.svg page pdf
 (Generates one page with 6 puzzles named page0.svg and a PDF version named page0.pdf)
 
-I've now added qqwing to this repo for ease of use. It is distrubted under the GPL and the original code is available here: http://ostermiller.org/qqwing/ 
-
 sudo2svg should work with any one-line puzzle source.
 
 ----------------------
@@ -39,14 +37,13 @@ Also included here is my Inkscape extenstion script in Python.
 
 To install in Inkscape extract the 2 render.sudoku files along with the svg-tempates into your /usr/share/inkscape/extensions directory.
 
-You also need the qqwing generator binary file (available separately) in the same directory.
-qqwing is available here: http://ostermiller.org/qqwing/
-
 Start Inkscape and you will see a new render extension called Sudoku.
 
 You can set options for rows/cols of puzzle layout on one page, and for border/background colors etc. You can also choose difficulty level for puzzles.
 
 Click "Apply" and an array of puzzles will be placed into your page.
+
+I've now added qqwing to this repo for ease of use. It is distrubted under the GPL and the original code is available here: http://ostermiller.org/qqwing/ 
 
 Have fun!
 

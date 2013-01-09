@@ -1,6 +1,6 @@
 CoinWatch - A simple daemon to monitor for Bitcoin payments and update mysql tables.
 
-This code is adapted from code I wrote to support an online Bitcoin service. It requires python-daemon (sudo apt-get install python-daemon). It can use poll bitcoind for new blocks or it can use the blockchain.info API for a more lightweight install. If rpc is not accessible it will try to rollover to blockchain.info as backup.
+This code is adapted from code I wrote to support an online Bitcoin service. It requires python-daemon (sudo apt-get install python-daemon). It polls bitcoind for new blocks or it can poll the blockchain.info API for a more lightweight install. If rpc is not accessible it will try to rollover to blockchain.info as backup.
 
 It maintains user account balances and watches for any payments made to update the accounts. It also updates a "jobs" table that controls something that an account balance allows to proceed or not. This could easily be adapted for other uses.
 
@@ -11,6 +11,6 @@ The main run loop polls for block-count change. When a new block is detected we 
 Several mysql tables are used. See schema.sql for brief descriptions and minimal sql create stmnts. In my application another backend process detects job status and actually runs jobs. These jobs cost bitcoin and so in my case I calculate which jobs can be run, and update status. Actual job fee is not deducted until job is completed.
 
 
-Config valuescontrol the watching. Initial values can be set by cmd args that get saved as default in a cfg file. See coinwatch --help. The config file is updated with block-count so that if the daemon restarts it can continue where it left off.
+Config values control the watching. Initial values can be set by cmd args that get saved as defaults in a cfg file. See coinwatch --help. The config file is updated with block-count so that if the daemon restarts it can continue where it left off.
 
 That's all folks. Hope this is useful. 
