@@ -4,7 +4,7 @@ I collected them all here so I don't lose them, and so others can find and use t
 
 Bitcoin:
 chainkeys - Web page for combining multi-key chains.
-coinwatch - Simple payments daemon updates mysql tables (bitcoind or blockchain.info).
+coinwatch - Simple payments daemon updates mysql tables (bitcoind/blockchain.info).
 epmtd	  - Simple payments daemon using only mysql table (Electrum MPK based).
 keyfmt	  - Convert private key as Hex, WIF, Pubkey, Address cmd line tool.
 hexwif 	  - Convert Bitcoin hex private key to WIF format cmd line tool.
