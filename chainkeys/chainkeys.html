@@ -12,9 +12,11 @@ function addPubKeys() {
 	var result = Crypto.util.hexToBytes(keys[0]);
 	keys.splice(0,1);
 	keys.map(function(k){
-		var akey = ECPointFp.decodeFrom(curve, Crypto.util.hexToBytes(k));
-		result = ECPointFp.decodeFrom(curve, result).add(akey).getEncoded(0);
-		})
+		if (k != "") {
+			var akey = ECPointFp.decodeFrom(curve, Crypto.util.hexToBytes(k));
+			result = ECPointFp.decodeFrom(curve, result).add(akey).getEncoded(0);
+		}
+	})
 	var addr = new Bitcoin.Address(Bitcoin.Util.sha256ripe160(result));
 	document.getElementById("resultPub").innerHTML = addr.toString();
     }
@@ -23,9 +25,11 @@ function addPrivKeys() {
 	var result = BigInteger.fromByteArrayUnsigned(Bitcoin.ECKey.decodeString(keys[0]));
 	keys.splice(0,1);
 	keys.map(function(k){
-		var akey = BigInteger.fromByteArrayUnsigned(Bitcoin.ECKey.decodeString(k));
-		result = result.add(akey).mod(getSECCurveByName('secp256k1').getN());
-		})
+		if (k != "") {
+			var akey = BigInteger.fromByteArrayUnsigned(Bitcoin.ECKey.decodeString(k));
+			result = result.add(akey).mod(getSECCurveByName('secp256k1').getN());
+		}
+	})
 	document.getElementById("resultPriv").innerHTML = new Bitcoin.ECKey(result).getExportedPrivateKey();
     }
 </script>
