@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
 # Read a seed from stdin and output MPK (Master Public Key).
-# Input one key per line hex (32 chars).
+# Input one seed per line hex (32 chars).
 #
-# Outputs the SEED and MPK for importing to Electrum.
+# Outputs the SEED and MPK for restoring to Electrum.
 # SEED for full wallet, MPK for watch only wallet.
 # eg.
 #     hexdump -v -e '/1 "%02X"' -n 16 /dev/urandom | mpk
