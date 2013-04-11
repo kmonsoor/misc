@@ -40,7 +40,7 @@ def run():
 		UpdatePendingTx(latest)
 		latest = GetBlockCount()
 		if latest > last:
-			print logts(), "Block", latest
+			print logts(), "Block", latest,
 			UpdateStats(GetBlockData(latest))
 			last = latest
 		
