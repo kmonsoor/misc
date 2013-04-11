@@ -10,16 +10,17 @@ File Info:
 
 cfmstats runs with the working directory set to /home/$user/cfmstats 
 
-cfmstats.cfg contains default config values, saved by -s option and overridden by cmd line.
-cfmstats.dat contains statistical counts so that shutting down won't lose entire history.
-cfmstats.log contains an processing log (only in daemon mode)
-cfmstats.csv contains CSV output results.
+cfmstats.cfg - config values, saved by -s option and overridden by cmd line.
+cfmstats.dat - statistical data so that shutting down won't lose history.
+cfmstats.log - activity log (only in daemon mode)
+cfmstats.csv - CSV output results.
 
-cfmstats.html contains HTML output result built from the template below.
-cfmstats.tmp.html is the HTML template. This is an example of the 3 substitution values supported.
-	%stats% - where to insert the table.
-	%blockcount% - where to insert the latest blockcount.
-	%trxcount% - where to insert the total number of transactions counted.
+cfmstats.html - HTML output result built from the template below.
+cfmstats.tmp.html - HTML template. Modify to suit your needs.
+	Supports 3 insertion variables:
+		%stats% - where to insert the table.
+		%blockcount% - where to insert the latest blockcount.
+		%trxcount% - where to insert the total number of transactions counted.
 	
 How It Works:
 
