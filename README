@@ -12,6 +12,7 @@ mkpwds	  - Password list generator for gpg private key challenge.
 mickey	  - Simple cmd line Bitcoin key generator based on keyconv.
 mpk  	  - Output Electrum Master Public Key (MPK) given a seed.
 mpkgen	  - C/Python/PHP scripts, PHP extension to generate addresses from MPK.
+cfmstats  - Generate statistics on Bitcoin confirmation speed by value and fee.
 
 
 Other:

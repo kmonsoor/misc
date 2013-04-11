@@ -1,0 +1,26 @@
+cfmstats runs as a daemon that monitors Bitcoin transactions via bitcoind rpc and builds a statistical array of confirmation speed broken down by transaction amount and fees. 
+
+It can take an HTML template and insert the data for presentation on a web interface. It also dumps the data in a simple CSV file for other uses. The ranges or "buckets" that transactions are sorted into can be set by start up options. The resulting output values are "average block count to confirm" for each amount/fee combination. The program maintains a state in the .cfg and .dat files.
+
+See the usage info (cfmstats -h) for available options. By default cfmstats runs as daemon in the background. Use --debug to run in foreground mode with logging to sdtout.
+
+File Info:
+
+cfmstats runs with the working directory set to /home/$user/cfmstats 
+
+cfmstats.cfg contains default config values, saved by -s option and overridden by cmd line.
+cfmstats.dat contains statistical counts so that shutting down won't lose entire history.
+cfmstats.log contains an processing log (only in daemon mode)
+cfmstats.csv contains CSV output results.
+
+cfmstats.html contains HTML output result built from the template below.
+cfmstats.tmp.html is the HTML template. This is an example of the 3 substitution values supported.
+	%stats% - where to insert the table.
+	%blockcount% - where to insert the latest blockcount.
+	%trxcount% - where to insert the total number of transactions counted.
+	
+How It Works:
+
+cfmstats polls bitcoind asking for the "mempool" transactions and new blocks. Mempool transactions are processed to sum inputs and outputs to calculate value and fees. These are cached until each transaction is confirmed. At start up the transactions present in the mempool are marked as old so that they are not used in statistics. This is because we don't really know when they were sent. 
+
+When a new block arrives each transactions is looked up in the cache to determine how many blocks have passed since it was sent. The transaction value and fees are used to select which table cell is updated with block counted waited and transaction count. After the block is prcessed the stats data is output as HTML and CSV values.
