@@ -24,6 +24,6 @@ cfmstats.tmp.html - HTML template. Modify to suit your needs.
     
 How It Works:
 
-cfmstats polls bitcoind asking for the "mempool" transactions and new blocks. Mempool transactions are processed to sum inputs and outputs to calculate value and fees. These are cached until each transaction is confirmed. At start up the transactions present in the mempool are marked as old so that they are not used in statistics. This is because we don't really know when they were sent. 
+cfmstats polls bitcoind asking for "mempool" transactions and new blocks. Mempool transactions are processed to sum inputs and outputs to calculate value and fees. These are cached until each transaction is confirmed. At start up the transactions present in the mempool are marked as old so that they are not used in statistics. This is because we don't really know when they were sent. 
 
-When a new block arrives each transactions is looked up in the cache to determine how many blocks have passed since it was sent. The transaction value and fees are used to select which table cell is updated with block counted waited and transaction count. After the block is prcessed the stats data is output as HTML and CSV values.
+When a new block arrives each transaction is looked up in the cache to determine how many blocks have passed since it was sent. The transaction value and fees are used to select which table cell is updated with block count difference and transaction count. After each block is processed the stats data is updated to the HTML and CSV files.
