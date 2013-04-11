@@ -4,6 +4,8 @@ It can take an HTML template and insert the data for presentation on a web inter
 
 See the usage info (cfmstats -h) for available options. By default cfmstats runs as daemon in the background. Use --debug to run in foreground mode with logging to sdtout.
 
+The first time you run cfmstats you will want to provide the rpc url with -r to connect to bitcoind. 
+
 File Info:
 
 cfmstats runs with the working directory set to /home/$user/cfmstats 
