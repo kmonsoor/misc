@@ -95,7 +95,7 @@ def UpdateStats(blkdata):
     for t in statcalc:
         with open('tmp.csv', 'w') as f:
             csvstats = '"Value / Fee","%s","> %s"\n' % ('","'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
-            for i,row in enumerate(stats):
+            for i,row in enumerate(stats[t]):
                 csvstats += '"%s","%s"\n' % (rowlabels[i], '","'.join([statcalc[t](n,totaltx[i][x]) if not n == 0 else '0' for x,n in enumerate(stats[t][i])]))
             f.write(csvstats)
         os.rename('tmp.csv', sys.argv[0]+'_%s.csv' % t)
