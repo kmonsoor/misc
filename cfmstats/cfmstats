@@ -75,12 +75,16 @@ def UpdateStats(blkdata):
                 
     with open(sys.argv[0]+'.dat', 'w') as f:
         pickle.dump((stats,totaltx,trx), f)
-            
+        
+    np = 0
+    for blk in pending:
+		np += len(pending[blk])
+          
     rowlabels = ["<= %s" % FF(e) for e in cfg['amounts']]
     rowlabels.append('> '+str(cfg['amounts'][-1]))    
     try:        
         with open(sys.argv[0]+'.tmp.html', 'r') as f:
-            html = f.read().replace('%blockcount%', str(blkdata['block_index'])).replace('%trxcount%', str(trx))
+            html = f.read().replace('%blockcount%', str(blkdata['block_index'])).replace('%trxcount%', str(trx)).replace('%pending%', str(np))
             for t in statcalc:
                 htmlstats = '<table class="stats"><tr><td>Value / Fee</td><td>%s</td><td>&gt; %s</td></tr>' % ('</td><td>'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
                 for r,label in enumerate(rowlabels):

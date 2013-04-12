@@ -13,7 +13,9 @@ cfmstats runs with the working directory set to /home/$user/cfmstats
 cfmstats.cfg - config values, saved by -s option and overridden by cmd line.
 cfmstats.dat - statistical data so that shutting down won't lose history.
 cfmstats.log - activity log (only in daemon mode)
-cfmstats.csv - CSV output results.
+
+cfmstats_avg.csv - CSV output results, Average Confirmation Time.
+cfmstats_1st.csv - CSV output results, Probable Next Block.
 
 cfmstats.html - HTML output result built from the template below.
 cfmstats.tmp.html - HTML template. Modify to suit your needs.
