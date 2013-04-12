@@ -17,8 +17,9 @@ cfmstats.csv - CSV output results.
 
 cfmstats.html - HTML output result built from the template below.
 cfmstats.tmp.html - HTML template. Modify to suit your needs.
-    Supports 3 insertion variables:
-        %stats% - where to insert the table.
+    Supports 4 insertion variables:
+        %avg% - where to insert the "Average Confirmation Time" table.
+        %1st% - where to insert the "Probable Next Block" table.
         %blockcount% - where to insert the latest blockcount.
         %trxcount% - where to insert the total number of transactions counted.
     

@@ -9,9 +9,16 @@ version = "0.1.0"
 cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':3, 'rpc_url':'http://localhost:8332', 
         'amounts':[0.001,0.01,0.1,0.5,1,10], 'fees':[0,0.00005,0.0001,0.0005,0.001,0.005,0.01] }
 
+def calc_avg(n, t):
+	return "%.1f" % (float(n)/t)
+	
+def calc_1st(n, t):
+	return "%.0f" % (float(n)/t*100)
+
+statcalc = { 'avg':calc_avg, '1st':calc_1st }
 pending = {}
+stats = {}
 totaltx = []
-stats = []
 trx = 0
 
 def main():
@@ -30,7 +37,8 @@ def run():
         with open(sys.argv[0]+'.dat', 'r') as f:
             stats,totaltx,trx = pickle.load(f)
     except IOError:
-        stats = [[0 for j in range(len(cfg['fees'])+1)] for i in range(len(cfg['amounts'])+1)]
+        for t in statcalc:
+            stats[t] = [[0 for j in range(len(cfg['fees'])+1)] for i in range(len(cfg['amounts'])+1)] 
         totaltx = [[0 for j in range(len(cfg['fees'])+1)] for i in range(len(cfg['amounts'])+1)]
         
     last = latest = GetBlockCount()
@@ -60,34 +68,38 @@ def UpdateStats(blkdata):
                 i = FindBucket(cfg['amounts'], amount)
                 j = FindBucket(cfg['fees'], fee)
                 #print "cfmtx:", blk, blkdata['block_index'] - blk, amount, fee, i, j
-                stats[i][j] += (blkdata['block_index'] - blk)
+                stats['avg'][i][j] += (blkdata['block_index'] - blk)
+                stats['1st'][i][j] += 1 if (blkdata['block_index'] - blk) == 1 else 0
                 totaltx[i][j] += 1
                 trx += 1
                 
     with open(sys.argv[0]+'.dat', 'w') as f:
         pickle.dump((stats,totaltx,trx), f)
-        
+            
     rowlabels = ["<= %s" % FF(e) for e in cfg['amounts']]
-    rowlabels.append('> '+str(cfg['amounts'][-1]))
-    htmlstats = '<table class="stats"><tr><td>Value / Fee</td><td>%s</td><td>&gt; %s</td></tr>' % ('</td><td>'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
-    for r,label in enumerate(rowlabels):
-        htmlstats += '<tr><td>%s</td><td>%s</td></tr>' % (label, '</td><td>'.join(["%.1f" % (float(n)/totaltx[r][i]) if not n == 0 else '-' for i,n in enumerate(stats[r])]))
-    htmlstats += '</table>'
+    rowlabels.append('> '+str(cfg['amounts'][-1]))    
     try:        
         with open(sys.argv[0]+'.tmp.html', 'r') as f:
-            html = f.read().replace('%stats%', htmlstats).replace('%blockcount%', str(blkdata['block_index'])).replace('%trxcount%', str(trx))
+            html = f.read().replace('%blockcount%', str(blkdata['block_index'])).replace('%trxcount%', str(trx))
+            for t in statcalc:
+                htmlstats = '<table class="stats"><tr><td>Value / Fee</td><td>%s</td><td>&gt; %s</td></tr>' % ('</td><td>'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
+                for r,label in enumerate(rowlabels):
+                    htmlstats += '<tr><td>%s</td><td>%s</td></tr>' % (label, '</td><td>'.join([statcalc[t](n,totaltx[r][i]) if not n == 0 else '-' for i,n in enumerate(stats[t][r])]))
+                htmlstats += '</table>'
+                html = html.replace('%%%s%%' % t, htmlstats)
             with open('tmp.html', 'w') as h:
                 h.write(html)
             os.rename('tmp.html', sys.argv[0]+'.html')
     except IOError:
         pass
-    with open('tmp.csv', 'w') as f:
-        csvstats = '"Value / Fee","%s","> %s"\n' % ('","'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
-        for i,row in enumerate(stats):
-            csvstats += '"%s","%s"\n' % (rowlabels[i], '","'.join(["%.1f"%(float(n)/totaltx[i][x]) if not n == 0 else '0' for x,n in enumerate(stats[i])]))
-        f.write(csvstats)
-    os.rename('tmp.csv', sys.argv[0]+'.csv')
-
+    for t in statcalc:
+        with open('tmp.csv', 'w') as f:
+            csvstats = '"Value / Fee","%s","> %s"\n' % ('","'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
+            for i,row in enumerate(stats):
+                csvstats += '"%s","%s"\n' % (rowlabels[i], '","'.join([statcalc[t](n,totaltx[i][x]) if not n == 0 else '0' for x,n in enumerate(stats[t][i])]))
+            f.write(csvstats)
+        os.rename('tmp.csv', sys.argv[0]+'_%s.csv' % t)
+        
 def FindBucket(L,v):
     for i,e in enumerate(L):
         if v <= e:
