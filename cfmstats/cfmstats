@@ -248,8 +248,9 @@ def usage():
 Cfg file is %s.cfg\nThese options get saved in cfg file as default.
 -p,--poll\tBlockchain poll time in seconds\n-a,--amounts\tSet amount column ranges\n-f,--fees\tSet fee row ranges\n-u,--user\tRun as user
 -r,--rpc\tSet bitcoind rpc-url 'http://rpcuser:rpcpwd@localhost:8332'
+-t,--template\tSelect html template file
 -l,--log\tSet log file path\n-i,--pid\tSet pid file path\n""" % sys.argv[0]
-    print "Defaults are:\nAmount ranges:", cfg['amounts'], "\nFee ranges:", cfg['fees'], "\nPoll time:", cfg['poll']
+    print "Defaults are:\nAmount ranges:", cfg['amounts'], "\nFee ranges:", cfg['fees'], "\nPoll time:", cfg['poll'], "\nTemplate:", sys.argv[0]+".tmp.html\n"
     sys.exit(2) 
                         
 def sigterm(signum, frame):
