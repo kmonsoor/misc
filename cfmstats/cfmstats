@@ -6,7 +6,7 @@ import json
 import random
 
 version = "0.1.0"
-cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':3, 'rpc_url':'http://localhost:8332', 
+cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':3, 'rpc_url':'http://localhost:8332', 'template':sys.argv[0]+'.tmp.html',
         'amounts':[0.001,0.01,0.1,0.5,1,10], 'fees':[0,0.00005,0.0001,0.0005,0.001,0.005,0.01] }
 
 def calc_avg(n, t):
@@ -83,7 +83,7 @@ def UpdateStats(blkdata):
     rowlabels = ["<= %s" % FF(e) for e in cfg['amounts']]
     rowlabels.append('> '+str(cfg['amounts'][-1]))    
     try:        
-        with open(sys.argv[0]+'.tmp.html', 'r') as f:
+        with open(cfg['template'], 'r') as f:
             html = f.read().replace('%blockcount%', str(blkdata['block_index'])).replace('%trxcount%', str(trx)).replace('%pending%', str(np))
             for t in statcalc:
                 htmlstats = '<table class="stats"><tr><td>Value / Fee</td><td>%s</td><td>&gt; %s</td></tr>' % ('</td><td>'.join(['0' if e == 0 else "<= %s" % FF(e) for e in cfg['fees']]), FF(cfg['fees'][-1]))
@@ -189,7 +189,9 @@ def loadcfg():
     global cfg
     try:
         with open(sys.argv[0]+'.cfg') as f:
-            cfg = pickle.load(f)
+            ovr = pickle.load(f)
+        for c in ovr:
+			cfg[c] = ovr[c]
     except IOError:
         print logts(),'No cfg file.\n',
     finally:
@@ -205,8 +207,8 @@ def savecfg():
 
 def options():
     try:                                
-        opts,args = getopt.getopt(sys.argv[1:], "hvdp:a:f:r:u:l:i:s", 
-            ["help", "version", "debug", "poll=", "amounts=", "fees=", "rpc=", "user=", "log=", "pid=", "defaults" ])
+        opts,args = getopt.getopt(sys.argv[1:], "hvdp:a:f:r:u:l:i:t:s", 
+            ["help", "version", "debug", "poll=", "amounts=", "fees=", "rpc=", "user=", "log=", "pid=", "template=", "defaults" ])
     except getopt.GetoptError:
         usage()
     for opt,arg in opts:
@@ -232,6 +234,8 @@ def options():
             cfg['log'] = arg
         elif opt in ("-i", "--pid"):
             cfg['pid'] = arg
+        elif opt in ("-t", "--template"):
+            cfg['template'] = arg            
         elif opt in ("-s", "--defaults"):
             savecfg()
             print "%s updated" % (sys.argv[0]+'.cfg')
