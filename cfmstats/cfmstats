@@ -10,10 +10,10 @@ cfg = { 'log':sys.argv[0]+'.log', 'pid':sys.argv[0]+'.pid', 'poll':3, 'rpc_url':
         'amounts':[0.001,0.01,0.1,0.5,1,10], 'fees':[0,0.00005,0.0001,0.0005,0.001,0.005,0.01] }
 
 def calc_avg(n, t):
-	return "%.1f" % (float(n)/t)
-	
+    return "%.1f" % (float(n)/t)
+    
 def calc_1st(n, t):
-	return "%.0f" % (float(n)/t*100)
+    return "%.0f" % (float(n)/t*100)
 
 statcalc = { 'avg':calc_avg, '1st':calc_1st }
 pending = {}
@@ -78,7 +78,7 @@ def UpdateStats(blkdata):
         
     np = 0
     for blk in pending:
-		np += len(pending[blk])
+        np += len(pending[blk])
           
     rowlabels = ["<= %s" % FF(e) for e in cfg['amounts']]
     rowlabels.append('> '+str(cfg['amounts'][-1]))    
@@ -191,7 +191,7 @@ def loadcfg():
         with open(sys.argv[0]+'.cfg') as f:
             ovr = pickle.load(f)
         for c in ovr:
-			cfg[c] = ovr[c]
+            cfg[c] = ovr[c]
     except IOError:
         print logts(),'No cfg file.\n',
     finally:
