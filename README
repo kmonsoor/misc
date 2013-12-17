@@ -14,6 +14,9 @@ mpk  	  - Output Electrum Master Public Key (MPK) given a seed.
 mpkgen	  - C/Python/PHP scripts, PHP extension to generate addresses from MPK.
 cfmstats  - Generate statistics on Bitcoin confirmation speed by value and fee.
 gox       - Minimal script to call MtGox API for ticker and lag data.
+mkseeds   - Create Electrum seeds from hex input or generate with addresses.
+gps       - Caluclate distance between two GPS co-ords.
+b2b       - Convert between bases using in/out alphabets.
 
 Other:
 sudoku	  - Inkscape extension (and bash script) to create SVG/PDF sudoku puzzles. 
