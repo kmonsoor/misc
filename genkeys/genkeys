@@ -86,10 +86,9 @@ for seed in sys.stdin:
         count = 5 if argc < 2 else int(sys.argv[1])
         chg = 0 if argc < 3 else int(sys.argv[2])
         index = 0 if argc < 4 else int(sys.argv[3])
-        
+
         for (i,c) in [(n,0) for n in range(index,index+count)]+[(n,1) for n in range(index,index+chg)]:
-            order = generator_secp256k1.order()
-            priv_key = ecdsa.util.number_to_string( ( stretched_seed + seq(i, c, master_public_key) ) % order, order )
+            priv_key = ecdsa.util.number_to_string( ( stretched_seed + seq(i, c, master_public_key) ) % _r, _r )
             print "Key  %d:%d" % (i,c), private_key_to_wif( chr((0+128)&255) + priv_key )
             
             pt1 = master_private_key.get_verifying_key().pubkey.point + seq(i, c, master_public_key) * generator_secp256k1
