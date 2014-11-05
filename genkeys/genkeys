@@ -52,7 +52,7 @@ def public_key_to_address(public_key):
     h = hashlib.sha256(hashlib.sha256( vh160 ).digest()).digest()
     return b58encode( vh160 + h[0:4] )
          
-def private_key_wif(priv_key):
+def private_key_to_wif(priv_key):
     hash = hashlib.sha256(hashlib.sha256( priv_key ).digest()).digest()
     return b58encode( priv_key + hash[0:4] )
     
@@ -90,7 +90,7 @@ for seed in sys.stdin:
         for (i,c) in [(n,0) for n in range(index,index+count)]+[(n,1) for n in range(index,index+chg)]:
             order = generator_secp256k1.order()
             priv_key = ecdsa.util.number_to_string( ( stretched_seed + seq(i, c, master_public_key) ) % order, order )
-            print "Key  %d:%d" % (i,c), private_key_wif( chr((0+128)&255) + priv_key )
+            print "Key  %d:%d" % (i,c), private_key_to_wif( chr((0+128)&255) + priv_key )
             
             pt1 = master_private_key.get_verifying_key().pubkey.point + seq(i, c, master_public_key) * generator_secp256k1
             pt2 = ecdsa.VerifyingKey.from_public_point( pt1, curve = SECP256k1 )
