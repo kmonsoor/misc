@@ -47,7 +47,7 @@ def b58encode(addr):
 
 def public_key_to_address(public_key):
     md = hashlib.new('ripemd160')
-    md.update(hashlib.sha256( public_key ).digest())
+    md.update(hashlib.sha256( public_key.decode('hex') ).digest())
     vh160 = chr(0) + md.digest()
     h = hashlib.sha256(hashlib.sha256( vh160 ).digest()).digest()
     return b58encode( vh160 + h[0:4] )
@@ -94,7 +94,7 @@ for seed in sys.stdin:
             
             pt1 = master_private_key.get_verifying_key().pubkey.point + seq(i, c, master_public_key) * generator_secp256k1
             pt2 = ecdsa.VerifyingKey.from_public_point( pt1, curve = SECP256k1 )
-            print "Addr %d:%d" % (i,c), public_key_to_address( '04' + pt2.to_string() ), "\n"
+            print "Addr %d:%d" % (i,c), public_key_to_address( '04' + pt2.to_string().encode('hex') ), "\n"
 
          
         
