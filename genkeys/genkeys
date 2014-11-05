@@ -21,6 +21,7 @@
 #    start-index, defaults to 0 
 #
 
+
 import sys, ecdsa, hashlib
   
 # support functions - formatting and conversion 
@@ -49,8 +50,8 @@ def public_key_to_address(public_key):
     md = hashlib.new('ripemd160')
     md.update(hashlib.sha256( public_key.decode('hex') ).digest())
     vh160 = chr(0) + md.digest()
-    h = hashlib.sha256(hashlib.sha256( vh160 ).digest()).digest()
-    return b58encode( vh160 + h[0:4] )
+    hash = hashlib.sha256(hashlib.sha256( vh160 ).digest()).digest()
+    return b58encode( vh160 + hash[0:4] )
          
 def private_key_to_wif(priv_key):
     hash = hashlib.sha256(hashlib.sha256( priv_key ).digest()).digest()
@@ -73,11 +74,11 @@ SECP256k1 = ecdsa.curves.Curve("SECP256k1", curve_secp256k1, generator_secp256k1
 
 # read seeds, do math, output mpk and key pairs
 for seed in sys.stdin:
-    stretched_seed = seed = seed[:32].replace(' ', '')
+    secexp = seed = seed[:32].replace(' ', '')
     for i in range(100000):
-        stretched_seed = hashlib.sha256(stretched_seed + seed).digest()
-    stretched_seed = ecdsa.util.string_to_number( stretched_seed )
-    master_private_key = ecdsa.SigningKey.from_secret_exponent( stretched_seed, curve = SECP256k1 )
+        secexp = hashlib.sha256(secexp + seed).digest()
+    secexp = ecdsa.util.string_to_number( secexp )
+    master_private_key = ecdsa.SigningKey.from_secret_exponent( secexp, curve = SECP256k1 )
     master_public_key = master_private_key.get_verifying_key().to_string()
     print "\nSeed:", seed, "\nMPK:", master_public_key.encode('hex'), "\n"
     
@@ -88,12 +89,12 @@ for seed in sys.stdin:
         index = 0 if argc < 4 else int(sys.argv[3])
 
         for (i,c) in [(n,0) for n in range(index,index+count)]+[(n,1) for n in range(index,index+chg)]:
-            priv_key = ecdsa.util.number_to_string( ( stretched_seed + seq(i, c, master_public_key) ) % _r, _r )
-            print "Key  %d:%d" % (i,c), private_key_to_wif( chr((0+128)&255) + priv_key )
+            priv_key = ecdsa.util.number_to_string( ( secexp + seq(i, c, master_public_key) ) % _r, _r )
+            print "k/%d/%d" % (c,i), private_key_to_wif( chr((0+128)&255) + priv_key )
             
             pt1 = master_private_key.get_verifying_key().pubkey.point + seq(i, c, master_public_key) * generator_secp256k1
             pt2 = ecdsa.VerifyingKey.from_public_point( pt1, curve = SECP256k1 )
-            print "Addr %d:%d" % (i,c), public_key_to_address( '04' + pt2.to_string().encode('hex') ), "\n"
+            print "a/%d/%d" % (c,i), public_key_to_address( '04' + pt2.to_string().encode('hex') ), "\n"
 
          
         
