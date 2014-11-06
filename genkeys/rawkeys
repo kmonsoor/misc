@@ -13,7 +13,7 @@
 # Optionally given an index and count it also will 
 # generate key/address pairs. Arguments are,
 # 
-#    genkeys [count] [chg] [start-index]
+#    rawkeys [count] [chg] [start-index]
 #
 # Where:
 #    count is number of key/addr pairs to output, default none
@@ -21,14 +21,14 @@
 #    start-index, defaults to 0 
 #
 
-import sys, hashlib, binascii
+import sys, hashlib
 
 # sha256 support (adapted for python 2.7 from slowsha)
 
 class sha256(object):
     _h0, _h1, _h2, _h3, _h4, _h5, _h6, _h7 = (
         0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19)
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 )
 
     def __init__(self, message):
         message = bytearray(message)
@@ -108,18 +108,8 @@ class sha256(object):
         self._h6 = (self._h6 + g) & 0xffffffff
         self._h7 = (self._h7 + h) & 0xffffffff
 
-    def _digest(self):
-        return (self._h0, self._h1, self._h2, self._h3,
-            self._h4, self._h5, self._h6, self._h7)
-            
-    def hexdigest(self):
-        return ''.join(hex(i)[2:-1].rjust(8, "0")
-            for i in self._digest())
-
     def digest(self):
-        hexdigest = self.hexdigest()[:64]
-        return str(bytearray(int(hexdigest[i * 2:i * 2 + 2], 16)
-            for i in range(len(hexdigest) // 2)))
+        return ''.join(hex(i)[2:-1].rjust(8, "0") for i in (self._h0,self._h1,self._h2,self._h3,self._h4,self._h5,self._h6,self._h7)).decode('hex')
 
 # the secp256k1 curve parameters 
 _p = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2FL
@@ -233,17 +223,17 @@ def private_key_to_wif(priv_key):
     return b58encode( priv_key + hash[0:4] )
     
 def seq(i, chg, mpk):
-    return int(binascii.hexlify( sha256(sha256( "%d:%d:" % (i, chg) + mpk ).digest()).digest() ), 16)
+    return int( sha256(sha256( "%d:%d:" % (i, chg) + mpk ).digest()).digest().encode('hex'), 16 )
 
 # read seeds, do math, output mpk and key pairs
 for seed in sys.stdin:
     secexp = seed = seed[:32].replace(' ', '')
     for i in range(100000):
         secexp = hashlib.sha256( secexp + seed ).digest()
-    secexp = int(binascii.hexlify(secexp), 16)
+    secexp = int(secexp.encode('hex'), 16)
     mpk = (x,y) = ptMul((_Gx,_Gy), secexp)
-    mpk_str = binascii.unhexlify(('%064x' % x).encode()) + binascii.unhexlify(('%064x' % y).encode())
-    print "\nSeed:", seed, "\nMPK:", mpk_str.encode('hex'), "\n"
+    mpk_str = ('%064x' % x + '%064x' % y).decode('hex')
+    print "\nSeed:%s\nMPK:%s\n" % (seed, mpk_str.encode('hex'))
     
     argc = len(sys.argv)
     if argc > 1:
@@ -252,12 +242,10 @@ for seed in sys.stdin:
         index = 0 if argc < 4 else int(sys.argv[3])
 
         for (i,c) in [(n,0) for n in range(index,index+count)]+[(n,1) for n in range(index,index+chg)]:
-            priv_key = binascii.unhexlify(('%064x' %  (secexp + seq(i, c, mpk_str)) ).encode()) 
-            print "k/%d/%d" % (c,i), private_key_to_wif( chr((0+128)&255) + priv_key )
-            
+            priv_key = ('%064x' %  ((secexp + seq(i, c, mpk_str)) % _r) ).decode('hex')
             (x,y) = ptAdd(mpk, ptMul((_Gx,_Gy), seq(i, c, mpk_str)))
-            public_key_str = binascii.unhexlify(('%064x' % x).encode()) + binascii.unhexlify(('%064x' % y).encode())
-            print "a/%d/%d" % (c,i), public_key_to_address( '04' + public_key_str.encode('hex') ), "\n"
+            pub_key_str = '04' + ('%064x' % x) + ('%064x' % y)
+            print "m/%d/%d %s,%s" % (c,i, private_key_to_wif( chr((0+128)&255) + priv_key ), public_key_to_address( pub_key_str ))
 
         
         
