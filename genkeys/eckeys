@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
-# Read a seed from stdin and output MPK (Master Public Key), and key/address pairs.
+# This version with EC math built in requires only std modules.
+#
+# Read seeds from stdin and output MPK (Master Public Key), and key/address pairs.
 # Input one seed per line hex (32 chars).
 #
 # Outputs the SEED and MPK for restoring to Electrum.
@@ -23,94 +25,6 @@
 
 import sys, hashlib
 
-# sha256 support (adapted for python 2.7 from slowsha)
-
-class sha256(object):
-    _h0, _h1, _h2, _h3, _h4, _h5, _h6, _h7 = (
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 )
-
-    def __init__(self, message):
-        message = bytearray(message)
-        length = bin(len(message) * 8)[2:].rjust(64, "0")
-        while len(message) > 64:
-            self._handle(''.join(bin(i)[2:].rjust(8, "0")
-                for i in message[:64]))
-            message = message[64:]
-        message = ''.join(bin(i)[2:].rjust(8, "0") for i in message) + "1"
-        message += "0" * ((448 - len(message) % 512) % 512) + length
-        for i in range(len(message) // 512):
-            self._handle(message[i * 512:i * 512 + 512])
-
-    def _handle(self, chunk):
-
-        rrot = lambda x, n: (x >> n) | (x << (32 - n))
-        w = []
-
-        k = [
-            0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
-            0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-            0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
-            0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-            0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
-            0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-            0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
-            0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-            0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
-            0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-            0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3,
-            0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-            0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5,
-            0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-            0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-            0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]
-
-        for j in range(len(chunk) // 32):
-            w.append(int(chunk[j * 32:j * 32 + 32], 2))
-
-        for i in range(16, 64):
-            s0 = rrot(w[i - 15], 7) ^ rrot(w[i - 15], 18) ^ (w[i - 15] >> 3)
-            s1 = rrot(w[i - 2], 17) ^ rrot(w[i - 2], 19) ^ (w[i - 2] >> 10)
-            w.append((w[i - 16] + s0 + w[i - 7] + s1) & 0xffffffff)
-
-        a = self._h0
-        b = self._h1
-        c = self._h2
-        d = self._h3
-        e = self._h4
-        f = self._h5
-        g = self._h6
-        h = self._h7
-
-        for i in range(64):
-            s0 = rrot(a, 2) ^ rrot(a, 13) ^ rrot(a, 22)
-            maj = (a & b) ^ (a & c) ^ (b & c)
-            t2 = s0 + maj
-            s1 = rrot(e, 6) ^ rrot(e, 11) ^ rrot(e, 25)
-            ch = (e & f) ^ ((~ e) & g)
-            t1 = h + s1 + ch + k[i] + w[i]
-
-            h = g
-            g = f
-            f = e
-            e = (d + t1) & 0xffffffff
-            d = c
-            c = b
-            b = a
-            a = (t1 + t2) & 0xffffffff
-
-        self._h0 = (self._h0 + a) & 0xffffffff
-        self._h1 = (self._h1 + b) & 0xffffffff
-        self._h2 = (self._h2 + c) & 0xffffffff
-        self._h3 = (self._h3 + d) & 0xffffffff
-        self._h4 = (self._h4 + e) & 0xffffffff
-        self._h5 = (self._h5 + f) & 0xffffffff
-        self._h6 = (self._h6 + g) & 0xffffffff
-        self._h7 = (self._h7 + h) & 0xffffffff
-
-    def digest(self):
-        return ''.join(hex(i)[2:-1].rjust(8, "0") for i in (self._h0,self._h1,self._h2,self._h3,self._h4,self._h5,self._h6,self._h7)).decode('hex')
-
 # the secp256k1 curve parameters 
 _p = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2FL
 _r = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141L
@@ -120,6 +34,7 @@ _Gx = 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798L
 _Gy = 0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8L
 
 # EC math support (adapted from python-ecdsa)
+# these 4 functions give us point multiply needed for public keys
 
 def InvMod(a, m):
     if a < 0 or m <= a: a = a % m
@@ -134,7 +49,8 @@ def InvMod(a, m):
     if ud > 0: return ud
     else: return ud + m
     
-def ptDouble( (x,y) ):
+def ptDouble( pt ):
+    (x,y) = pt
     if (x,y) == (None,None): 
         return (None, None)
         
@@ -144,8 +60,9 @@ def ptDouble( (x,y) ):
     
     return (x3,y3)
  
-def ptAdd( (x1,y1), (x2,y2) ):
-
+def ptAdd( pt1, pt2 ):
+    (x1,y1) = pt1
+    (x2,y2) = pt2
     if (x2,y2) == (None, None): return (x1,y1)
     if (x1,y1) == (None, None): return (x2,y2)
 
@@ -162,8 +79,9 @@ def ptAdd( (x1,y1), (x2,y2) ):
 
     return (x3, y3)
    
-def ptMul( (x,y), z ):
-
+def ptMul( pt, z ):
+    (x,y) = pt
+    
     def leftmost_bit( x ):
         assert x > 0
         result = 1
@@ -212,24 +130,30 @@ def b58encode(addr):
     return (alphabet[0]*nPad) + result
 
 def public_key_to_address(public_key):
-    md = hashlib.new('ripemd160')
-    md.update(sha256( public_key.decode('hex') ).digest())
-    vh160 = chr(0) + md.digest()
-    hash = sha256(sha256( vh160 ).digest()).digest()
+    vh160 = chr(0) + ripemd160( sha256( public_key.decode('hex') ))
+    hash = sha256(sha256( vh160 ))
     return b58encode( vh160 + hash[0:4] )
          
 def private_key_to_wif(priv_key):
-    hash = sha256(sha256( priv_key ).digest()).digest()
+    hash = sha256(sha256( priv_key ))
     return b58encode( priv_key + hash[0:4] )
     
 def seq(i, chg, mpk):
-    return int( sha256(sha256( "%d:%d:" % (i, chg) + mpk ).digest()).digest().encode('hex'), 16 )
+    return int( sha256(sha256( "%d:%d:" % (i, chg) + mpk )).encode('hex'), 16 )
+    
+def sha256(msg):
+    return hashlib.sha256(msg).digest()
+    
+def ripemd160(msg):
+    md = hashlib.new('ripemd160')
+    md.update( msg )
+    return md.digest()
 
 # read seeds, do math, output mpk and key pairs
 for seed in sys.stdin:
     secexp = seed = seed[:32].replace(' ', '')
     for i in range(100000):
-        secexp = hashlib.sha256( secexp + seed ).digest()
+        secexp = sha256( secexp + seed )
     secexp = int(secexp.encode('hex'), 16)
     mpk = (x,y) = ptMul((_Gx,_Gy), secexp)
     mpk_str = ('%064x' % x + '%064x' % y).decode('hex')
